@@ -2,7 +2,7 @@
   CONFIG
 ***********************/
 const SHEET_ID = "1J6GhI4VeM9-MfIQ7LLo1Nj7i06lxV8ZxjhZj_RGOa-s";
-const API_KEY = "AIzaSyDTI3yXucHM8LHQeSXJYYJJYVzufW0R6ik";
+const API_KEY = "AIzaSyATbVcBFJ-KgKEXVNDUoCY8JPPMoyPAQXM";
 const SHEET_PROFILES = "fixed data";    // Sheet chứa học viên
 const SHEET_VOCAB = "added vocab";      // Sheet chứa từ vựng
 const TEST_DURATION_SECONDS = 6;        // Thời gian cho mỗi câu kiểm tra
@@ -684,3 +684,4 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
   }
 });
+
