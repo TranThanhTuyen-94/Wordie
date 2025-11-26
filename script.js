@@ -354,4 +354,102 @@ function renderWordList() {
     return;
   }
 
-  const byLesson = {};
+    const byLesson = {};
+  state.selectedLessons.forEach(lesson => {
+    byLesson[lesson] = state.allVocab.filter(r => r.lesson === lesson);
+  });
+
+  // Hiển thị theo từng bài
+  Object.keys(byLesson).forEach(lesson => {
+    const block = document.createElement("div");
+    block.className = "lesson-block";
+    const title = document.createElement("h4");
+    title.textContent = lesson;
+    block.appendChild(title);
+
+    const ul = document.createElement("ul");
+    ul.className = "list";
+    byLesson[lesson].forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = `${item.english} — ${item.synonym || "-"} — ${item.meaning || "-"}`;
+      ul.appendChild(li);
+    });
+    block.appendChild(ul);
+    cont.appendChild(block);
+  });
+}
+
+/* -------------------------
+   Hỗ trợ: cập nhật dashboard
+   ------------------------- */
+function updateHomeDashboard() {
+  try {
+    // Cố gắng lấy tên học viên từ ô Home nếu có
+    const homeInput = qs("#homeStudentSearch");
+    const name = homeInput ? homeInput.value.trim() : "";
+    if (name) {
+      loadHomeDashboard(name).catch(() => {});
+      return;
+    }
+    // Fallback: cập nhật từ state
+    if (qs("#appVocabCount")) qs("#appVocabCount").textContent = state.allVocab.length || 0;
+    if (qs("#appTestCount")) {
+      const lessons = [...new Set(state.allVocab.map(v => v.lesson))];
+      qs("#appTestCount").textContent = lessons.length || 0;
+    }
+    if (qs("#lastTotalCount")) qs("#lastTotalCount").textContent = state.totalCount || 0;
+    if (qs("#lastKnownCount")) qs("#lastKnownCount").textContent = state.knownCount || 0;
+    if (qs("#lastTestWords")) qs("#lastTestWords").textContent = state.testList.length || 0;
+    if (qs("#lastTestCount")) qs("#lastTestCount").textContent = state.testResults.length || 0;
+  } catch (err) {
+    // im lặng nếu phần tử không tồn tại
+    console.warn("updateHomeDashboard error", err);
+  }
+}
+
+/* -------------------------
+   Practice / Test placeholders
+   (bạn có thể mở rộng sau)
+   ------------------------- */
+function renderPractice() {
+  const panel = qs("#practice");
+  if (!panel) return;
+  // Hiển thị từ đầu tiên trong practiceList
+  if (!state.practiceList || state.practiceList.length === 0) {
+    qs("#practiceWord").textContent = "—";
+    qs("#practiceHint").textContent = "—";
+    return;
+  }
+  const idx = state.practiceIndex % state.practiceList.length;
+  const item = state.practiceList[idx];
+  qs("#practiceWord").textContent = item.english || "—";
+  qs("#practiceHint").textContent = item.meaning || item.synonym || "—";
+}
+
+function renderTest() {
+  const panel = qs("#test");
+  if (!panel) return;
+  // Tạm: hiển thị số lượng từ trong testList
+  qs("#testWord").textContent = state.testList[state.testIndex] ? state.testList[state.testIndex].english : "—";
+}
+
+/* -------------------------
+   Khởi tạo an toàn khi load
+   ------------------------- */
+document.addEventListener("DOMContentLoaded", async () => {
+  // console log để kiểm tra file đã load
+  console.log("script.js loaded");
+
+  // Đảm bảo các phần tử tồn tại trước khi gắn event
+  try {
+    if (qs("#vocabRows") && qs("#vocabRows").children.length === 0) addVocabRow();
+  } catch (e) {}
+
+  // Refresh profiles nếu có
+  try { await refreshProfiles(); } catch (e) { console.warn(e); }
+
+  // Bảo vệ các listener đã gắn trước đó (nếu có lỗi, tránh crash)
+  // (nếu bạn đã gắn listener ở trên, không cần gắn lại ở đây)
+});
+
+
