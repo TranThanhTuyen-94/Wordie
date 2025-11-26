@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Vocab Trainer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Vocab Trainer</h1>
+    <nav>
+      <button class="nav-btn" data-target="profile">Tạo profile</button>
+      <button class="nav-btn" data-target="input">Nhập từ vựng</button>
+      <button class="nav-btn" data-target="review">Ôn tập</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Trang chủ -->
+    <section id="home" class="page active">
+<div class="form-row">
+  <label for="homeStudentSearch">Chọn học viên</label>
+  <input type="text" id="homeStudentSearch" placeholder="Nhập tên học viên..."/>
+  <ul id="homeStudentSuggestions" class="list hidden"></ul>
+</div>
+      <div class="card">
+        <h2>Tổng quan</h2>
+        <div class="dashboard">
+          <div class="left-col">
+            <h3>Thông tin chung</h3>
+            <p><strong>Số test trong app:</strong> <span id="appTestCount">0</span></p>
+            <p><strong>Tổng số từ vựng:</strong> <span id="appVocabCount">0</span></p>
+          </div>
+          <div class="right-col">
+            <h3>Lịch sử gần nhất</h3>
+            <p><strong>Số bài kiểm tra gần nhất:</strong> <span id="lastTestCount">0</span></p>
+            <p><strong>Từ đã thuộc / Tổng số từ đã chọn:</strong> 
+              <span id="lastKnownCount">0</span>/<span id="lastTotalCount">0</span></p>
+            <p><strong>Số lượng từ trong test gần nhất:</strong> <span id="lastTestWords">0</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tạo profile -->
+    <section id="profile" class="page">
+      <div class="card">
+        <h2>Tạo profile</h2>
+        <div class="form-row">
+          <label for="studentName">Tên học viên</label>
+          <input type="text" id="studentName" placeholder="Nhập tên học viên..."/>
+        </div>
+        <button id="createProfileBtn" class="primary">Tạo profile</button>
+        <p id="profileMsg" class="msg"></p>
+        <hr/>
+        <h3>Danh sách học viên</h3>
+        <ul id="profilesList" class="list"></ul>
+      </div>
+    </section>
+
+    <!-- Nhập từ vựng -->
+    <section id="input" class="page">
+      <div class="card">
+        <h2>Nhập từ vựng</h2>
+        <div class="form-grid">
+          <div class="form-col">
+            <label for="studentSearch">Chọn học viên</label>
+            <input type="text" id="studentSearch" placeholder="Nhập tên học viên..."/>
+            <ul id="studentSuggestions" class="list hidden"></ul>
+          </div>
+          <div class="form-col">
+            <label for="lessonName">Tên bài học</label>
+            <input type="text" id="lessonName" placeholder="Ví dụ: Travel 01"/>
+          </div>
+        </div>
+
+        <div id="vocabRows" class="rows"></div>
+
+        <div class="row-actions">
+<button id="addRowBtn" class="secondary">+ Thêm hàng</button>
+          <button id="saveVocabBtn" class="primary">Lưu từ vựng</button>
+        </div>
+
+        <p id="inputMsg" class="msg"></p>
+      </div>
+    </section>
+
+    <!-- Ôn tập -->
+    <section id="review" class="page">
+      <div class="card">
+        <h2>Ôn tập</h2>
+        <div class="form-row">
+          <label for="reviewStudentSearch">Chọn học viên</label>
+          <input type="text" id="reviewStudentSearch" placeholder="Nhập tên học viên..."/>
+          <ul id="reviewStudentSuggestions" class="list hidden"></ul>
+        </div>
+        <button id="loadDataBtn" class="primary">Tải dữ liệu</button>
+        <p id="reviewMsg" class="msg"></p>
+
+        <div id="lessonsContainer" class="lessons"></div>
+        <p class="tip">Chọn tối đa 8 bài gần nhất.</p>
+
+        <div class="review-actions">
+          <button id="showWordListBtn" class="secondary">Word list</button>
+          <button id="practiceBtn" class="secondary">Ôn tập</button>
+          <button id="testBtn" class="secondary">Kiểm tra</button>
+        </div>
+
+        <!-- Word List -->
+        <div id="wordList" class="panel hidden">
+          <h3>Word list</h3>
+          <div id="wordListContent"></div>
+        </div>
+
+        <!-- Practice -->
+        <div id="practice" class="panel hidden">
+          <h3>Ôn tập</h3>
+          <div class="practice-card">
+            <div><strong>Từ:</strong> <span id="practiceWord">—</span></div>
+            <div class="practice-actions">
+              <button id="hintBtn" class="secondary">Hint</button>
+              <button id="nextPracticeBtn" class="primary">Next</button>
+            </div>
+            <div><strong>Hint:</strong> <span id="practiceHint">—</span></div>
+          </div>
+          <div class="practice-summary">
+            <h4>Từ đã bấm Hint</h4>
+            <ul id="hintedList" class="list"></ul>
+          </div>
+        </div>
+
+        <!-- Test -->
+        <div id="test" class="panel hidden">
+          <h3>Kiểm tra</h3>
+          <div class="test-header">
+            <div><strong>Thời gian còn:</strong> <span id="timer">6s</span></div>
+            <div><strong>Từ tiếng Anh:</strong> <span id="testWord">—</span></div>
+          </div>
+
+          <div class="test-columns">
+            <div class="test-col">
+              <h4>Đồng nghĩa</h4>
+              <ul id="synOptions" class="options"></ul>
+            </div>
+            <div class="test-col">
+              <h4>Nghĩa tiếng Việt</h4>
+              <ul id="meanOptions" class="options"></ul>
+            </div>
+          </div>
+
+          <div class="test-actions">
+            <label><input type="checkbox" id="requireBothCols" checked/> Bắt buộc chọn cả 2 cột</label>
+            <button id="nextTestBtn" class="primary">Next</button>
+          </div>
+
+          <div class="test-summary">
+            <h4>Kết quả</h4>
+<ul id="testResultList" class="list"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© 2025 Vocab Trainer</small>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
